@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    restart: always
+    command: >
+      sh -c "python3 manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migration
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST: ${DB_HOST}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  migration:
+    build: .
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+             python3 manage.py migrate"
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

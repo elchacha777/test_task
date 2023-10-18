@@ -34,3 +34,8 @@ Run
 ```bash
 python3 manage.py runserver
 ```
+
+
+Tests
+
+python3 manage.py test
